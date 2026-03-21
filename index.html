@@ -71,7 +71,7 @@
   .table-wrap { overflow-x:auto; }
   table { width:100%; border-collapse:collapse; }
   thead tr { border-bottom:1px solid #2a2210; }
-  th { font-size:9.5px; letter-spacing:0.1em; text-transform:uppercase; color:#7a6a3a; padding:10px 12px; text-align:right; font-weight:500; cursor:pointer; user-select:none; white-space:nowrap; transition:color 0.15s; }
+  th { font-size:9.5px; letter-spacing:0.1em; text-transform:uppercase; color:#7a6a3a; padding:10px 12px; text-align:right; font-weight:700; cursor:pointer; user-select:none; white-space:nowrap; transition:color 0.15s; }
   th:hover{color:#c9a84c;} th:first-child,th:nth-child(2),th:nth-child(3){text-align:left;} th.sorted{color:#c9a84c;}
   th .sort-arrow{margin-left:4px;opacity:0.4;} th.sorted .sort-arrow{opacity:1;}
 
@@ -202,14 +202,14 @@
     <table>
       <thead><tr>
         <th onclick="sortBy('ticker')">Ticker <span class="sort-arrow">↕</span></th>
-        <th onclick="sortBy('fechaApertura')">F. Apertura <span class="sort-arrow">↕</span></th>
+        <th onclick="sortBy('fechaApertura')">Fecha Apertura <span class="sort-arrow">↕</span></th>
         <th>Estado</th>
         <th onclick="sortBy('dias')">Días <span class="sort-arrow">↕</span></th>
         <th onclick="sortBy('totalUnidades')">Unidades <span class="sort-arrow">↕</span></th>
         <th>PP Compra</th>
         <th onclick="sortBy('totalInvertido')">Total Compra <span class="sort-arrow">↕</span></th>
         <th onclick="sortBy('valorActual')">Valor Actual <span class="sort-arrow">↕</span></th>
-        <th>P. Venta</th>
+        <th>Precio Venta</th>
         <th onclick="sortBy('pnlPct')">PnL(%)</th>
         <th onclick="sortBy('pnlUSD')">PnL(USD)</th>
         <th>DCA</th>
@@ -469,7 +469,6 @@ function render(){
         <td>
           ${multi?`<button class="toggle-btn" onclick="toggleExpand(${p.id})" title="${isExp?'Colapsar':'Ver tramos DCA'}">${isExp?'▲':'▼'}</button>`:'<span style="display:inline-block;width:25px;margin-right:7px;"></span>'}
           <span class="ticker">${p.ticker}</span>
-          ${multi&&!isExp?`<span class="ppp-hint">×${p.tramos.length}</span>`:''}
         </td>
         <td><span class="date">${fmtDate(p.fechaApertura)}</span></td>
         <td><span class="badge ${p.estado}">${p.estado.toUpperCase()}</span></td>
@@ -481,7 +480,7 @@ function render(){
         <td>${p.pVenta?fmt$(p.pVenta):'<span class="pnl-zero">—</span>'}</td>
         <td>${pnlHtml(p.pnlPct,true)}</td>
         <td>${pnlHtml(p.pnlUSD)}</td>
-        <td>${multi?`<span class="dca-count">${p.tramos.length} tramos</span>`:dcaBadge(1)}</td>
+        <td>${multi?`<span class="dca-count">${p.tramos.length} entradas</span>`:dcaBadge(1)}</td>
         <td><div class="actions">
           <button class="action-btn" onclick="editPos(${p.id})" title="Editar">✎</button>
           <button class="action-btn del" onclick="deletePos(${p.id})" title="Eliminar">✕</button>
