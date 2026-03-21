@@ -41,15 +41,21 @@
   .header-date { font-size:11px; color:var(--text-dim); letter-spacing:0.06em; text-align:right; }
   .header-date strong { display:block; color:var(--text); font-size:12px; font-weight:400; }
 
-  .kpi-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:12px; margin-bottom:24px; }
-  .kpi { background:var(--surface); border:1px solid var(--border); padding:16px; position:relative; overflow:hidden; }
+  /* ── KPI grid: 6 columnas, más compactas ── */
+  .kpi-grid { display:grid; grid-template-columns:repeat(6,1fr); gap:10px; margin-bottom:20px; }
+  .kpi { background:var(--surface); border:1px solid var(--border); padding:12px 14px; position:relative; overflow:hidden; }
   .kpi::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; }
   .kpi.neutral::before{background:var(--text-muted);} .kpi.positive::before{background:var(--green);}
   .kpi.negative::before{background:var(--red);} .kpi.info::before{background:var(--blue);} .kpi.warn::before{background:var(--yellow);}
-  .kpi-label { font-size:10px; color:#c9a84c; letter-spacing:0.12em; text-transform:uppercase; margin-bottom:8px; font-weight:500; }
-  .kpi-value { font-family:var(--sans); font-size:20px; font-weight:500; color:var(--text-hi); }
+  .kpi-label { font-size:9.5px; color:#c9a84c; letter-spacing:0.12em; text-transform:uppercase; margin-bottom:6px; font-weight:500; }
+  .kpi-value { font-family:var(--sans); font-size:17px; font-weight:500; color:var(--text-hi); }
   .kpi-value.positive{color:var(--green);} .kpi-value.negative{color:var(--red);} .kpi-value.info{color:var(--blue);} .kpi-value.warn{color:var(--yellow);}
-  .kpi-sub { font-size:11px; color:var(--text-dim); margin-top:5px; font-weight:300; }
+  .kpi-sub { font-size:10.5px; color:var(--text-hi); margin-top:5px; font-weight:600; }
+
+  /* card de ganancia: valor USD + % en la misma línea */
+  .kpi-value-row { display:flex; align-items:baseline; gap:9px; flex-wrap:wrap; }
+  .kpi-pct { font-family:var(--sans); font-size:12px; font-weight:400; opacity:0.75; }
+  .kpi-pct.positive{color:var(--green);} .kpi-pct.negative{color:var(--red);}
 
   .toolbar { display:flex; gap:10px; margin-bottom:16px; align-items:center; justify-content:space-between; }
   .toolbar-left { display:flex; gap:8px; align-items:center; }
@@ -353,8 +359,6 @@ function calcPos(p){
 let lastFetch=null, fetchTimer=null, retryCount=0;
 function setStatus(msg,cls=''){ const el=document.getElementById('quote-status'); el.textContent=msg; el.className='quote-status '+cls; }
 
-// detecta si está corriendo bajo vercel dev (3000) o prod — usa /api/quotes
-// si corre desde otro origen (Live Server, file://) usa fallback de proxies
 const IS_VERCEL = ['localhost:3000', '127.0.0.1:3000'].includes(location.host) || location.hostname.endsWith('.vercel.app');
 
 async function fetchQuotes(){
@@ -370,7 +374,6 @@ async function fetchQuotes(){
   try {
     let data;
     if(IS_VERCEL) {
-      // vercel dev o prod — server-side proxy, sin CORS
       const res = await fetch(`/api/quotes?symbols=${encodeURIComponent(tickers.join(','))}`, {
         signal: AbortSignal.timeout(10000)
       });
@@ -378,7 +381,6 @@ async function fetchQuotes(){
       data = await res.json();
       quotes = data?.quoteResponse?.result ?? null;
     } else {
-      // fallback para Live Server u otros entornos — prueba proxies en cascada
       const sym = encodeURIComponent(tickers.join(','));
       const yUrl = `https://query1.finance.yahoo.com/v7/finance/quote?symbols=${sym}&fields=regularMarketPrice,symbol`;
       const proxies = ['https://api.allorigins.win/raw?url=','https://corsproxy.io/?url='];
@@ -428,7 +430,7 @@ function startAutoRefresh(){ clearInterval(fetchTimer); fetchTimer=setInterval((
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)fetchQuotes();});
 
 // ── Render ──
-function fmt$(n){ return n==null?'—':'$'+Math.abs(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+function fmt$(n){ return n==null?'—':'$ '+Math.abs(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}); }
 function fmtPct(n){ return (n>=0?'+':'')+n.toFixed(2)+'%'; }
 function fmtDate(s){ if(!s) return '—'; const [y,m,d]=s.split('-'); return `${d}/${m}/${y.slice(2)}`; }
 const DCA_L={1:'1° DCA',2:'2° DCA',3:'3° DCA'};
@@ -462,7 +464,6 @@ function render(){
       const isExp=expanded.has(p.id);
       const multi=p.tramos.length>1;
 
-      // fila resumen
       html+=`<tr class="row-summary ${p.estado}${isExp?' expanded':''}" data-id="${p.id}">
         <td>
           ${multi?`<button class="toggle-btn" onclick="toggleExpand(${p.id})" title="${isExp?'Colapsar':'Ver tramos DCA'}">${isExp?'▲':'▼'}</button>`:'<span style="display:inline-block;width:25px;margin-right:7px;"></span>'}
@@ -486,7 +487,6 @@ function render(){
         </div></td>
       </tr>`;
 
-      // filas DCA detalle
       if(isExp){
         p.tramos.forEach((t,i)=>{
           const n=i+1, isLast=i===p.tramos.length-1;
@@ -519,10 +519,19 @@ function render(){
   const totInv=all.reduce((s,p)=>s+p.totalInvertido,0);
   const totPnL=all.reduce((s,p)=>s+p.pnlUSD,0);
   const abiertas=all.filter(p=>p.estado==='abierta');
+  const cerradas=all.filter(p=>p.estado==='cerrada');
   const totValor=abiertas.reduce((s,p)=>s+p.valorTotal,0);
-  const ganadas=all.filter(p=>p.estado==='cerrada').reduce((s,p)=>s+p.pnlUSD,0);
-  const liquidez=INITIAL_CAPITAL-abiertas.reduce((s,p)=>s+p.totalInvertido,0)+ganadas;
+
+  // ganancia realizada: solo posiciones cerradas, usando precio de venta
+  const gananciaRealizada=cerradas.reduce((s,p)=>s+p.pnlUSD,0);
+  const invCerradas=cerradas.reduce((s,p)=>s+p.totalInvertido,0);
+  const gananciaRzPct=invCerradas>0?(gananciaRealizada/invCerradas)*100:0;
+
+  // liquidez = capital inicial - invertido en abiertas + lo ganado en cerradas
+  const invAbiertas=abiertas.reduce((s,p)=>s+p.totalInvertido,0);
+  const liquidez=INITIAL_CAPITAL-invAbiertas+gananciaRealizada;
   const liqPct=(liquidez/INITIAL_CAPITAL)*100;
+
   document.getElementById('tfoot').innerHTML=`<tr>
     <td colspan="5"><span class="total-label">TOTALES</span></td>
     <td></td><td><strong>${fmt$(totInv)}</strong></td>
@@ -531,14 +540,39 @@ function render(){
     <td>${pnlHtml(totPnL)}</td>
     <td colspan="2"></td></tr>`;
 
-  // KPIs
-  document.getElementById('kpi-grid').innerHTML=[
-    {l:'Capital Inicial',  v:fmt$(INITIAL_CAPITAL),                               c:'neutral', s:'Base de referencia'},
-    {l:'Invertido Activo', v:fmt$(abiertas.reduce((s,p)=>s+p.totalInvertido,0)),  c:'info',    s:`${abiertas.length} posiciones abiertas`},
-    {l:'PnL Total',        v:(totPnL>=0?'+':'')+fmt$(totPnL),                     c:totPnL>=0?'positive':'negative', s:totInv>0?fmtPct(totPnL/totInv*100):''},
-    {l:'Liquidez',         v:fmtPct(liqPct),                                      c:liqPct>=50?'positive':'warn',    s:fmt$(liquidez)},
-    {l:'Portfolio Total',  v:fmt$(liquidez+totValor),                             c:'info',    s:'Liquidez + activos abiertos'},
-  ].map(k=>`<div class="kpi ${k.c}"><div class="kpi-label">${k.l}</div><div class="kpi-value ${k.c}">${k.v}</div><div class="kpi-sub">${k.s}</div></div>`).join('');
+  // ── KPI cards ──
+  const grC = gananciaRealizada>=0?'positive':'negative';
+  const pnlTotC = totPnL>=0?'positive':'negative';
+  const kpiSimples=[
+    {l:'Capital Inicial',  v:fmt$(INITIAL_CAPITAL), c:'neutral', s:'Base de referencia'},
+    {l:'Invertido Activo', v:fmt$(invAbiertas),      c:'info',    s:`${abiertas.length} posic. abiertas`},
+    {l:'Liquidez',         v:fmtPct(liqPct),         c:liqPct>=50?'positive':'warn', s:fmt$(liquidez)},
+    {l:'Portfolio Total',  v:fmt$(liquidez+totValor),c:'info',    s:'Liquidez + activos'},
+  ];
+
+  document.getElementById('kpi-grid').innerHTML =
+    kpiSimples.map(k=>`
+      <div class="kpi ${k.c}">
+        <div class="kpi-label">${k.l}</div>
+        <div class="kpi-value ${k.c}">${k.v}</div>
+        <div class="kpi-sub">${k.s}</div>
+      </div>`).join('')
+    + `<div class="kpi ${pnlTotC}">
+        <div class="kpi-label">PnL Total</div>
+        <div class="kpi-value-row">
+          <span class="kpi-value ${pnlTotC}">${(totPnL>=0?'+':'')+fmt$(totPnL)}</span>
+          <span class="kpi-pct ${pnlTotC}">${totInv>0?fmtPct(totPnL/totInv*100):''}</span>
+        </div>
+        <div class="kpi-sub">Abiertas + cerradas</div>
+      </div>`
+    + `<div class="kpi ${grC}">
+        <div class="kpi-label">Ganancia</div>
+        <div class="kpi-value-row">
+          <span class="kpi-value ${grC}">${(gananciaRealizada>=0?'+':'')+fmt$(gananciaRealizada)}</span>
+          <span class="kpi-pct ${grC}">${invCerradas>0?fmtPct(gananciaRzPct):''}</span>
+        </div>
+        <div class="kpi-sub">${cerradas.length} pos. cerrada${cerradas.length!==1?'s':''} · ${fmt$(invCerradas)}</div>
+      </div>`;
 }
 
 // ── Sort / Filter ──
@@ -577,7 +611,6 @@ function openModal(id=null){
   editingId=id;
   document.getElementById('modal-title').textContent=id?'Editar Posición':'Nueva Posición';
   const today=new Date().toISOString().split('T')[0];
-  // reset DCA 2,3
   [2,3].forEach(n=>{
     document.getElementById(`fields-dca${n}`).classList.add('hidden');
     const b=document.getElementById(`toggle-dca${n}`); b.textContent='+ Agregar'; b.classList.remove('active');
