@@ -170,19 +170,22 @@
   tr.row-summary{animation:fadeIn 0.18s ease both;}
 
   /* ── VIEW TABS ── */
-  .view-tabs { display:flex; gap:6px; margin-bottom:20px; border-bottom:1px solid var(--border); padding-bottom:12px; }
-  .view-tab { font-family:var(--mono); font-size:11px; letter-spacing:0.09em; font-weight:500; padding:8px 18px; border:1px solid var(--border2); background:transparent; color:var(--text-muted); cursor:pointer; text-transform:uppercase; transition:all 0.15s; }
-  .view-tab:hover { border-color:var(--text-dim); color:var(--text); }
-  .view-tab.active-personal { border-color:var(--blue); color:var(--blue); background:var(--blue-bg); }
-  .view-tab.active-reto { border-color:var(--green); color:var(--green); background:var(--green-bg); }
-  .view-tab.active-gestionar { border-color:var(--yellow); color:var(--yellow); background:var(--yellow-bg); }
-  .view-tab.tab-reto { border-color:rgba(45,212,160,0.3); color:var(--green); }
-  .view-tab.tab-gestionar { border-color:rgba(232,184,75,0.3); color:var(--yellow); display:none; }
+  .view-tabs { display:flex; gap:8px; margin-bottom:20px; border-bottom:2px solid var(--border); padding-bottom:14px; }
+  .view-tab { font-family:var(--sans); font-size:12px; letter-spacing:0.1em; font-weight:600; padding:10px 24px; border:2px solid var(--border2); background:transparent; color:var(--text-muted); cursor:pointer; text-transform:uppercase; transition:all 0.2s; border-radius:2px; }
+  .view-tab:hover { transform:translateY(-1px); box-shadow:0 4px 12px rgba(0,0,0,0.3); }
+  .view-tab.active-personal { border-color:var(--blue); color:var(--blue); background:var(--blue-bg); box-shadow:0 0 12px rgba(91,163,245,0.2); }
+  .view-tab.active-reto { border-color:var(--green); color:var(--green); background:var(--green-bg); box-shadow:0 0 12px rgba(45,212,160,0.2); }
+  .view-tab.active-gestionar { border-color:var(--yellow); color:var(--yellow); background:var(--yellow-bg); box-shadow:0 0 12px rgba(232,184,75,0.2); }
+  .view-tab.tab-reto { border-color:rgba(45,212,160,0.4); color:var(--green); }
+  .view-tab.tab-reto:hover { border-color:var(--green); background:var(--green-bg); color:var(--green); }
+  .view-tab.tab-gestionar { border-color:rgba(232,184,75,0.4); color:var(--yellow); display:none; }
+  .view-tab.tab-gestionar:hover { border-color:var(--yellow); background:var(--yellow-bg); color:var(--yellow); }
+  .view-tab:not(.tab-reto):not(.tab-gestionar):hover { border-color:var(--blue); background:var(--blue-bg); color:var(--blue); }
   .view-label { font-family:var(--sans); font-size:11px; font-weight:600; letter-spacing:0.06em; text-transform:uppercase; padding:4px 12px; border-radius:2px; margin-bottom:8px; display:inline-block; }
   .view-label.personal { background:var(--blue-bg); color:var(--blue); border:1px solid rgba(91,163,245,0.2); }
   .view-label.reto { background:var(--green-bg); color:var(--green); border:1px solid rgba(45,212,160,0.2); }
   .view-label.gestionar { background:var(--yellow-bg); color:var(--yellow); border:1px solid rgba(232,184,75,0.2); }
-  .readonly-bar { font-size:10px; color:var(--text-muted); letter-spacing:0.08em; text-transform:uppercase; padding:6px 0; margin-bottom:12px; border-bottom:1px solid var(--border); }
+  .readonly-bar { font-size:10px; color:var(--green); letter-spacing:0.08em; text-transform:uppercase; padding:8px 0; margin-bottom:12px; border-bottom:1px solid rgba(45,212,160,0.2); font-weight:600; }
 
   /* ── PORTFOLIO MAESTRO ── */
   .master-section { margin-bottom: 20px; border: 1px solid var(--border2); }
@@ -313,7 +316,7 @@
   <!-- View Tabs -->
   <div class="view-tabs">
     <button class="view-tab active-personal" id="tab-personal" onclick="setView('personal')">MI RETO 2026</button>
-    <button class="view-tab tab-reto" id="tab-reto" onclick="setView('reto')">RETO</button>
+    <button class="view-tab tab-reto" id="tab-reto" onclick="setView('reto')">RETO 2026</button>
     <button class="view-tab tab-gestionar" id="tab-gestionar" onclick="setView('gestionar')">GESTIONAR RETO</button>
   </div>
 
@@ -785,7 +788,7 @@ function render(){
 
       html+=`<tr class="row-summary ${p.estado}${isExp?' expanded':''}" data-id="${p.id}">
         <td>
-          ${multi && currentView !== 'reto' ?`<button class="toggle-btn" onclick="toggleExpand('${p.id}')" title="${isExp?'Colapsar':'Ver tramos DCA'}">${isExp?'▲':'▼'}</button>`:'<span style="display:inline-block;width:25px;margin-right:7px;"></span>'}
+          ${multi && currentView !== 'reto' ? `<button class="toggle-btn" onclick="toggleExpand('${p.id}')" title="${isExp?'Colapsar':'Ver tramos DCA'}">${isExp?'▲':'▼'}</button>` : '<span style="display:inline-block;width:25px;margin-right:7px;"></span>'}
           <span class="ticker">${p.ticker}</span>
         </td>
         <td><span class="date">${fmtDate(p.fechaApertura)}</span></td>
