@@ -1,2 +1,4 @@
 .vercel
 *.Zone.Identifier
+.env
+.env.local
