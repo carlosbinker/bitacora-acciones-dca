@@ -178,7 +178,7 @@
   .view-tab.active-gestionar { border-color:var(--yellow); color:var(--yellow); background:var(--yellow-bg); box-shadow:0 0 12px rgba(232,184,75,0.2); }
   .view-tab.tab-reto { border-color:rgba(45,212,160,0.4); color:var(--green); }
   .view-tab.tab-reto:hover, .view-tab.tab-reto:focus { border-color:var(--green) !important; background:var(--green-bg) !important; color:var(--green) !important; transform:translateY(-1px); box-shadow:0 4px 12px rgba(45,212,160,0.25); }
-  .view-tab.tab-gestionar { border-color:rgba(232,184,75,0.4); color:var(--yellow); display:none; }
+  .view-tab.tab-gestionar { border-color:rgba(232,184,75,0.4); color:var(--yellow); }
   .view-tab.tab-gestionar:hover, .view-tab.tab-gestionar:focus { border-color:var(--yellow) !important; background:var(--yellow-bg) !important; color:var(--yellow) !important; transform:translateY(-1px); box-shadow:0 4px 12px rgba(232,184,75,0.25); }
   .view-tab:not(.tab-reto):not(.tab-gestionar):hover { border-color:var(--blue); background:var(--blue-bg); color:var(--blue); }
   .view-label { font-family:var(--sans); font-size:11px; font-weight:600; letter-spacing:0.06em; text-transform:uppercase; padding:4px 12px; border-radius:2px; margin-bottom:8px; display:inline-block; }
@@ -317,7 +317,7 @@
   <div class="view-tabs">
     <button class="view-tab active-personal" id="tab-personal" onclick="setView('personal')">MI RETO 2026</button>
     <button class="view-tab tab-reto" id="tab-reto" onclick="setView('reto')">RETO 2026</button>
-    <button class="view-tab tab-gestionar" id="tab-gestionar" onclick="setView('gestionar')">GESTIONAR RETO</button>
+    <button class="view-tab tab-gestionar" id="tab-gestionar" onclick="setView('gestionar')" style="display:none;">GESTIONAR RETO</button>
   </div>
 
   <!-- View label + toolbar -->
@@ -917,10 +917,13 @@ let masterPositions = [];
 async function setView(view) {
   currentView = view;
 
-  // Update tab styles
+  // Update tab styles (preserve gestionar visibility)
+  const gestTab = document.getElementById('tab-gestionar');
+  const gestDisplay = gestTab.style.display;
   document.getElementById('tab-personal').className = 'view-tab' + (view==='personal' ? ' active-personal' : '');
   document.getElementById('tab-reto').className = 'view-tab tab-reto' + (view==='reto' ? ' active-reto' : '');
-  document.getElementById('tab-gestionar').className = 'view-tab tab-gestionar' + (view==='gestionar' ? ' active-gestionar' : '');
+  gestTab.className = 'view-tab tab-gestionar' + (view==='gestionar' ? ' active-gestionar' : '');
+  gestTab.style.display = gestDisplay; // restore display after className change
 
   // Update label
   const label = document.getElementById('view-label');
@@ -1000,8 +1003,11 @@ async function loadMasterManage() {
 }
 
 function initCoordinatorUI() {
+  const tab = document.getElementById('tab-gestionar');
   if (authRol === 'coordinador') {
-    document.getElementById('tab-gestionar').style.display = 'inline-flex';
+    tab.style.display = 'inline-flex';
+  } else {
+    tab.style.display = 'none';
   }
 }
 
