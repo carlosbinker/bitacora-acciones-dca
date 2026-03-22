@@ -258,6 +258,7 @@
     </div>
     <input type="email" id="auth-email" placeholder="Email">
     <input type="password" id="auth-password" placeholder="Contraseña">
+    <input type="text" id="auth-alias" placeholder="Nombre / Alias (opcional)" style="display:none;">
     <button class="btn primary" id="auth-btn" onclick="handleAuth()">Ingresar</button>
     <div id="auth-error"></div>
   </div>
@@ -419,6 +420,7 @@ function switchTab(tab) {
   document.getElementById('tab-login').classList.toggle('active', tab==='login');
   document.getElementById('tab-register').classList.toggle('active', tab==='register');
   document.getElementById('auth-btn').textContent = tab==='login' ? 'Ingresar' : 'Registrarse';
+  document.getElementById('auth-alias').style.display = tab==='register' ? 'block' : 'none';
 }
 
 async function handleAuth() {
@@ -433,19 +435,22 @@ async function handleAuth() {
   if (password.length < 6) { errEl.textContent = 'La contraseña debe tener al menos 6 caracteres'; return; }
   btn.textContent = '...'; btn.disabled = true;
   try {
+    const alias = document.getElementById('auth-alias').value.trim();
     const res = await fetch('/api/auth', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: authTab, email, password })
+      body: JSON.stringify({ action: authTab, email, password, alias })
     });
     const data = await res.json();
     if (data.error) { errEl.textContent = data.error; return; }
     authToken = data.token;
     authUser  = data.user;
+    const displayName = data.alias || authUser.email || authUser.user_metadata?.email || '';
     localStorage.setItem('pt_token', authToken);
     localStorage.setItem('pt_user', JSON.stringify(authUser));
+    localStorage.setItem('pt_alias', data.alias || '');
     document.getElementById('auth-overlay').style.display = 'none';
-    document.getElementById('user-email').textContent = authUser.email || authUser.user_metadata?.email || '';
+    document.getElementById('user-email').textContent = displayName;
     loadPositions();
   } catch(e) {
     errEl.textContent = 'Error de conexion';
@@ -459,6 +464,7 @@ function logout() {
   if (!confirm('Cerrar sesion?')) return;
   localStorage.removeItem('pt_token');
   localStorage.removeItem('pt_user');
+  localStorage.removeItem('pt_alias');
   authToken = null; authUser = null; positions = [];
   render();
   document.getElementById('user-email').textContent = '';
@@ -907,7 +913,8 @@ document.getElementById('modal-overlay').addEventListener('click',function(e){if
 // ── Init ──
 if (authToken) {
   document.getElementById('auth-overlay').style.display = 'none';
-  document.getElementById('user-email').textContent = authUser?.email || authUser?.user_metadata?.email || '';
+  const savedAlias = localStorage.getItem('pt_alias');
+  document.getElementById('user-email').textContent = savedAlias || authUser?.email || authUser?.user_metadata?.email || '';
   loadPositions();
 } else {
   document.getElementById('auth-overlay').style.display = 'flex';
