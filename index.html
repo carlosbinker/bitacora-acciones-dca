@@ -495,7 +495,7 @@ function render(){
 
       html+=`<tr class="row-summary ${p.estado}${isExp?' expanded':''}" data-id="${p.id}">
         <td>
-          ${multi?`<button class="toggle-btn" onclick="toggleExpand(${p.id})" title="${isExp?'Colapsar':'Ver tramos DCA'}">${isExp?'▲':'▼'}</button>`:'<span style="display:inline-block;width:25px;margin-right:7px;"></span>'}
+          ${multi?`<button class="toggle-btn" onclick="toggleExpand('${p.id}')" title="${isExp?'Colapsar':'Ver tramos DCA'}">${isExp?'▲':'▼'}</button>`:'<span style="display:inline-block;width:25px;margin-right:7px;"></span>'}
           <span class="ticker">${p.ticker}</span>
         </td>
         <td><span class="date">${fmtDate(p.fechaApertura)}</span></td>
@@ -510,8 +510,8 @@ function render(){
         <td>${pnlHtml(p.pnlUSD)}</td>
         <td>${multi?`<span class="dca-count">${p.tramos.length} entradas</span>`:dcaBadge(1)}</td>
         <td><div class="actions">
-          <button class="action-btn" onclick="editPos(${p.id})" title="Editar">✎</button>
-          <button class="action-btn del" onclick="deletePos(${p.id})" title="Eliminar">✕</button>
+          <button class="action-btn" onclick="editPos('${p.id}')" title="Editar">✎</button>
+          <button class="action-btn del" onclick="deletePos('${p.id}')" title="Eliminar">✕</button>
         </div></td>
       </tr>`;
 
