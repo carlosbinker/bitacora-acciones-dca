@@ -461,7 +461,13 @@ let filterState='todas', sortField=null, sortAsc=true, editingId=null;
 let expanded = new Set();
 let authTab = 'login';
 let authToken = localStorage.getItem('pt_token');
-let authRol = localStorage.getItem('pt_rol') || 'usuario';
+let authRol = 'usuario';
+try {
+  const storedUser = JSON.parse(localStorage.getItem('pt_user') || 'null');
+  const storedRol = localStorage.getItem('pt_rol') || 'usuario';
+  // Only trust stored rol if there's a matching logged-in user
+  authRol = storedUser ? storedRol : 'usuario';
+} catch(e) { authRol = 'usuario'; }
 let currentView = 'personal'; // 'personal' | 'reto'
 let authUser = null;
 try { authUser = JSON.parse(localStorage.getItem('pt_user') || 'null'); } catch(e) { localStorage.removeItem('pt_user'); }
