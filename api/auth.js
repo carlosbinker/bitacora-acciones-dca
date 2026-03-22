@@ -30,7 +30,12 @@ export default async function handler(req, res) {
       body: JSON.stringify({ email, password })
     });
     const data = await r.json();
-    if (data.error) return res.status(400).json({ error: data.error_description || data.error });
+    if (data.error || data.error_code) {
+      return res.status(400).json({ error: 'Email o contraseña incorrectos' });
+    }
+    if (!data.access_token) {
+      return res.status(400).json({ error: 'Email o contraseña incorrectos' });
+    }
     return res.status(200).json({ user: data.user, token: data.access_token });
   }
 
