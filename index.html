@@ -797,7 +797,7 @@ function render(){
         <td class="units">${p.totalUnidades}</td>
         <td class="price">${fmt$(p.ppp)}</td>
         <td>${fmt$(p.totalInvertido)}</td>
-        <td class="price ${p.valorActual>=p.ppp?'pnl-pos':'pnl-neg'}">${p.estado==='cerrada'&&p.pVenta?fmt$(p.pVenta):fmt$(p.valorActual)}</td>
+        <td class="price ${p.valorActual>=p.ppp?'pnl-pos':'pnl-neg'}">${fmt$(p.valorActual)}</td>
         <td>${p.pVenta?fmt$(p.pVenta):'<span class="pnl-zero">—</span>'}</td>
         <td>${pnlHtml(p.pnlPct,true)}</td>
         <td>${pnlHtml(p.pnlUSD)}</td>
@@ -839,7 +839,7 @@ function render(){
 
   // tfoot
   const all=positions.map(calcPos);
-  const totInv=all.reduce((s,p)=>s+p.totalInvertido,0);
+  const totInv=abiertas.reduce((s,p)=>s+p.totalInvertido,0);
   const abiertas=all.filter(p=>p.estado==='abierta');
   const cerradas=all.filter(p=>p.estado==='cerrada');
   const totValor=abiertas.reduce((s,p)=>s+p.valorTotal,0);
