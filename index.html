@@ -604,6 +604,8 @@ function toggleMaster() {
   body.classList.toggle('open');
   toggle.classList.toggle('open');
 }
+
+async function loadPositions() {
   setStatus('Cargando posiciones…', 'loading');
   try {
     const data = await apiCall('GET');
