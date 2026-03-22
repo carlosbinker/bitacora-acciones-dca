@@ -471,7 +471,10 @@ async function apiCall(method, body=null, id=null) {
   if (body) opts.body = JSON.stringify(body);
   const url = id ? '/api/positions?id=' + id : '/api/positions';
   const res = await fetch(url, opts);
-  if (res.status === 401) { logout(); return null; }
+  if (res.status === 401) {
+    console.error('401 - token:', authToken ? authToken.slice(0,20)+'...' : 'NULL');
+    logout(); return null;
+  }
   if (method === 'DELETE' || res.status === 204) return null;
   return res.json();
 }
