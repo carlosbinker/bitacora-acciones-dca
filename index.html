@@ -679,8 +679,8 @@ function setStatus(msg,cls=''){ const el=document.getElementById('quote-status')
 const IS_VERCEL = ['localhost:3000', '127.0.0.1:3000'].includes(location.host) || location.hostname.endsWith('.vercel.app');
 
 async function fetchQuotes(){
-  const tickers=[...new Set(positions.filter(p=>p.estado==='abierta').map(p=>p.ticker))];
-  if(!tickers.length){setStatus('Sin posiciones abiertas','');return;}
+  const tickers=[...new Set(positions.map(p=>p.ticker))];
+  if(!tickers.length){setStatus('Sin posiciones','');return;}
 
   const btn=document.getElementById('btn-refresh');
   const icon=btn.querySelector('.refresh-icon');
@@ -728,7 +728,7 @@ async function fetchQuotes(){
   retryCount=0; let updated=0, notFound=[];
   const updatePromises=[];
   quotes.forEach(q=>{ const pr=q.regularMarketPrice; if(pr==null) return;
-    positions.forEach(p=>{ if(p.ticker.toUpperCase()===q.symbol.toUpperCase()&&p.estado==='abierta'){
+    positions.forEach(p=>{ if(p.ticker.toUpperCase()===q.symbol.toUpperCase()){
       p.valorActual=Math.round(pr*10000)/10000; updated++;
       updatePromises.push(apiCall('PUT',{id:p.id,valor_actual:p.valorActual}));
     }});
