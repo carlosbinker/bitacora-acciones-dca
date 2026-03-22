@@ -177,9 +177,9 @@
   .view-tab.active-reto { border-color:var(--green); color:var(--green); background:var(--green-bg); box-shadow:0 0 12px rgba(45,212,160,0.2); }
   .view-tab.active-gestionar { border-color:var(--yellow); color:var(--yellow); background:var(--yellow-bg); box-shadow:0 0 12px rgba(232,184,75,0.2); }
   .view-tab.tab-reto { border-color:rgba(45,212,160,0.4); color:var(--green); }
-  .view-tab.tab-reto:hover { border-color:var(--green); background:var(--green-bg); color:var(--green); }
+  .view-tab.tab-reto:hover, .view-tab.tab-reto:focus { border-color:var(--green) !important; background:var(--green-bg) !important; color:var(--green) !important; transform:translateY(-1px); box-shadow:0 4px 12px rgba(45,212,160,0.25); }
   .view-tab.tab-gestionar { border-color:rgba(232,184,75,0.4); color:var(--yellow); display:none; }
-  .view-tab.tab-gestionar:hover { border-color:var(--yellow); background:var(--yellow-bg); color:var(--yellow); }
+  .view-tab.tab-gestionar:hover, .view-tab.tab-gestionar:focus { border-color:var(--yellow) !important; background:var(--yellow-bg) !important; color:var(--yellow) !important; transform:translateY(-1px); box-shadow:0 4px 12px rgba(232,184,75,0.25); }
   .view-tab:not(.tab-reto):not(.tab-gestionar):hover { border-color:var(--blue); background:var(--blue-bg); color:var(--blue); }
   .view-label { font-family:var(--sans); font-size:11px; font-weight:600; letter-spacing:0.06em; text-transform:uppercase; padding:4px 12px; border-radius:2px; margin-bottom:8px; display:inline-block; }
   .view-label.personal { background:var(--blue-bg); color:var(--blue); border:1px solid rgba(91,163,245,0.2); }
@@ -342,7 +342,7 @@
   </div>
 
   <!-- Readonly bar (shown in RETO view) -->
-  <div class="readonly-bar" id="readonly-bar" style="display:none;">★ Solo lectura — Portfolio del coordinador del Reto 2026</div>
+  <div class="readonly-bar" id="readonly-bar" style="display:none;">★ Solo lectura — RETO 2026 · Portfolio del coordinador</div>
 
   <div class="table-wrap">
     <table>
