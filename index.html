@@ -169,12 +169,20 @@
   @keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
   tr.row-summary{animation:fadeIn 0.18s ease both;}
 
-  /* ── COORDINATOR TAB ── */
-  .coord-tab { font-family:var(--mono); font-size:10px; letter-spacing:0.07em; font-weight:500; padding:6px 14px; border:1px solid var(--yellow); background:rgba(232,184,75,0.08); color:var(--yellow); cursor:pointer; text-transform:uppercase; transition:all 0.15s; display:none; }
-  .coord-tab:hover { background:rgba(232,184,75,0.18); }
-  .coord-tab.active { background:var(--yellow); color:#060a0f; }
-  .coord-indicator { display:inline-flex; align-items:center; gap:6px; font-size:9px; letter-spacing:0.1em; text-transform:uppercase; color:var(--yellow); font-weight:600; padding:3px 10px; border:1px solid rgba(232,184,75,0.3); background:rgba(232,184,75,0.06); }
-  .coord-indicator::before { content:'★'; font-size:10px; }
+  /* ── VIEW TABS ── */
+  .view-tabs { display:flex; gap:6px; margin-bottom:20px; border-bottom:1px solid var(--border); padding-bottom:12px; }
+  .view-tab { font-family:var(--mono); font-size:11px; letter-spacing:0.09em; font-weight:500; padding:8px 18px; border:1px solid var(--border2); background:transparent; color:var(--text-muted); cursor:pointer; text-transform:uppercase; transition:all 0.15s; }
+  .view-tab:hover { border-color:var(--text-dim); color:var(--text); }
+  .view-tab.active-personal { border-color:var(--blue); color:var(--blue); background:var(--blue-bg); }
+  .view-tab.active-reto { border-color:var(--green); color:var(--green); background:var(--green-bg); }
+  .view-tab.active-gestionar { border-color:var(--yellow); color:var(--yellow); background:var(--yellow-bg); }
+  .view-tab.tab-reto { border-color:rgba(45,212,160,0.3); color:var(--green); }
+  .view-tab.tab-gestionar { border-color:rgba(232,184,75,0.3); color:var(--yellow); display:none; }
+  .view-label { font-family:var(--sans); font-size:11px; font-weight:600; letter-spacing:0.06em; text-transform:uppercase; padding:4px 12px; border-radius:2px; margin-bottom:8px; display:inline-block; }
+  .view-label.personal { background:var(--blue-bg); color:var(--blue); border:1px solid rgba(91,163,245,0.2); }
+  .view-label.reto { background:var(--green-bg); color:var(--green); border:1px solid rgba(45,212,160,0.2); }
+  .view-label.gestionar { background:var(--yellow-bg); color:var(--yellow); border:1px solid rgba(232,184,75,0.2); }
+  .readonly-bar { font-size:10px; color:var(--text-muted); letter-spacing:0.08em; text-transform:uppercase; padding:6px 0; margin-bottom:12px; border-bottom:1px solid var(--border); }
 
   /* ── PORTFOLIO MAESTRO ── */
   .master-section { margin-bottom: 20px; border: 1px solid var(--border2); }
@@ -298,34 +306,23 @@
     <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;"><div class="header-date"><strong id="current-date"></strong><span id="current-time"></span></div><div style="display:flex;align-items:center;gap:10px;"><span class="auth-user" id="user-email"></span><button class="btn" onclick="logout()" style="padding:4px 12px;font-size:9.5px;">Salir</button></div></div>
   </header>
 
-  <!-- Portfolio Maestro -->
-  <div class="master-section" id="master-section" style="display:none;">
-    <div class="master-header" onclick="toggleMaster()">
-      <div class="master-title">
-        <span class="master-badge">Portfolio Maestro</span>
-        <span class="master-name" id="master-name"></span>
-      </div>
-      <span class="master-toggle" id="master-toggle">▼</span>
-    </div>
-    <div class="master-body" id="master-body">
-      <div class="master-readonly">Solo lectura — referencia del coordinador</div>
-      <div class="master-kpis" id="master-kpis"></div>
-      <div class="table-wrap">
-        <table>
-          <thead><tr>
-            <th>Ticker</th><th>Fecha Apertura</th><th>Estado</th><th>Días</th>
-            <th>Unidades</th><th>PP Compra</th><th>Total Compra</th>
-            <th>Valor Actual</th><th>Precio Venta</th><th>PnL(%)</th><th>PnL(USD)</th><th>DCA</th>
-          </tr></thead>
-          <tbody id="master-tbody"></tbody>
-        </table>
-      </div>
-    </div>
-  </div>
+  <!-- Portfolio Maestro (removed - now handled via RETO tab) -->
 
   <div class="kpi-grid" id="kpi-grid"></div>
 
-  <div class="toolbar">
+  <!-- View Tabs -->
+  <div class="view-tabs">
+    <button class="view-tab active-personal" id="tab-personal" onclick="setView('personal')">MI RETO 2026</button>
+    <button class="view-tab tab-reto" id="tab-reto" onclick="setView('reto')">RETO</button>
+    <button class="view-tab tab-gestionar" id="tab-gestionar" onclick="setView('gestionar')">GESTIONAR RETO</button>
+  </div>
+
+  <!-- View label + toolbar -->
+  <div id="view-header">
+    <span class="view-label personal" id="view-label">MI RETO 2026</span>
+  </div>
+
+  <div class="toolbar" id="toolbar-actions">
     <div class="toolbar-left">
       <button class="btn primary" onclick="openModal()" id="btn-nueva">+ Nueva Posición</button>
       <div class="filter-group">
@@ -333,7 +330,6 @@
         <button class="filter-btn" onclick="setFilter('abierta',this)">Abiertas</button>
         <button class="filter-btn" onclick="setFilter('cerrada',this)">Cerradas</button>
       </div>
-      <button class="coord-tab" id="coord-tab" onclick="switchView()">Gestionar Reto</button>
     </div>
     <div style="display:flex;gap:8px;align-items:center;">
       <span id="quote-status" class="quote-status"></span>
@@ -341,6 +337,9 @@
       <button class="btn" onclick="exportCSV()">↓ CSV</button>
     </div>
   </div>
+
+  <!-- Readonly bar (shown in RETO view) -->
+  <div class="readonly-bar" id="readonly-bar" style="display:none;">★ Solo lectura — Portfolio del coordinador del Reto 2026</div>
 
   <div class="table-wrap">
     <table>
@@ -637,7 +636,6 @@ async function loadPositions() {
     }));
     render();
     fetchQuotes();
-    loadMasterPortfolio();
   } catch(e) {
     console.error('Error cargando posiciones:', e);
     setStatus('Error cargando datos', 'error');
@@ -902,8 +900,63 @@ function render(){
       </div>`;
 }
 
-// ── Coordinator view ──
+// ── View management ──
 let masterPositions = [];
+
+async function setView(view) {
+  currentView = view;
+
+  // Update tab styles
+  document.getElementById('tab-personal').className = 'view-tab' + (view==='personal' ? ' active-personal' : '');
+  document.getElementById('tab-reto').className = 'view-tab tab-reto' + (view==='reto' ? ' active-reto' : '');
+  document.getElementById('tab-gestionar').className = 'view-tab tab-gestionar' + (view==='gestionar' ? ' active-gestionar' : '');
+
+  // Update label
+  const label = document.getElementById('view-label');
+  const labels = { personal: 'MI RETO 2026', reto: 'RETO 2026', gestionar: 'GESTIONAR RETO' };
+  const labelClass = { personal: 'view-label personal', reto: 'view-label reto', gestionar: 'view-label gestionar' };
+  label.textContent = labels[view];
+  label.className = labelClass[view];
+
+  // Show/hide toolbar actions and readonly bar
+  const toolbar = document.getElementById('toolbar-actions');
+  const readonlyBar = document.getElementById('readonly-bar');
+  const btnNueva = document.getElementById('btn-nueva');
+
+  if (view === 'reto') {
+    toolbar.style.display = 'none';
+    readonlyBar.style.display = 'block';
+  } else {
+    toolbar.style.display = 'flex';
+    readonlyBar.style.display = 'none';
+    btnNueva.textContent = view === 'gestionar' ? '+ Nueva Posición al Reto' : '+ Nueva Posición';
+  }
+
+  // Load data
+  if (view === 'personal') await loadPositions();
+  else if (view === 'reto') await loadRetoReadonly();
+  else if (view === 'gestionar') await loadMasterManage();
+}
+
+async function loadRetoReadonly() {
+  setStatus('Cargando reto…', 'loading');
+  try {
+    const res = await fetch('/api/master', {
+      headers: { 'Authorization': 'Bearer ' + authToken }
+    });
+    const data = await res.json();
+    positions = (data.positions || []).map(p => ({
+      id: p.id, ticker: p.ticker, estado: p.estado,
+      valorActual: p.valor_actual, pVenta: p.p_venta,
+      notas: p.notas || '', tramos: p.tramos || []
+    }));
+    render();
+    fetchQuotes();
+  } catch(e) {
+    console.error('Error cargando reto:', e);
+    setStatus('Error cargando reto', 'error');
+  }
+}
 
 async function apiCallMaster(method, body=null, id=null) {
   const opts = {
@@ -918,33 +971,15 @@ async function apiCallMaster(method, body=null, id=null) {
   return res.json();
 }
 
-async function switchView() {
-  const tab = document.getElementById('coord-tab');
-  if (currentView === 'personal') {
-    currentView = 'reto';
-    tab.textContent = '← Mi Portfolio';
-    tab.classList.add('active');
-    document.getElementById('btn-nueva').textContent = '+ Nueva Posición al Reto';
-    await loadMasterManage();
-  } else {
-    currentView = 'personal';
-    tab.textContent = 'Gestionar Reto';
-    tab.classList.remove('active');
-    document.getElementById('btn-nueva').textContent = '+ Nueva Posición';
-    await loadPositions();
-  }
-}
-
 async function loadMasterManage() {
   setStatus('Cargando portfolio del reto…', 'loading');
   try {
     const data = await apiCallMaster('GET');
-    masterPositions = (data || []).map(p => ({
+    positions = (data || []).map(p => ({
       id: p.id, ticker: p.ticker, estado: p.estado,
       valorActual: p.valor_actual, pVenta: p.p_venta,
       notas: p.notas || '', tramos: p.tramos || []
     }));
-    positions = masterPositions;
     render();
     fetchQuotes();
   } catch(e) {
@@ -955,7 +990,7 @@ async function loadMasterManage() {
 
 function initCoordinatorUI() {
   if (authRol === 'coordinador') {
-    document.getElementById('coord-tab').style.display = 'inline-flex';
+    document.getElementById('tab-gestionar').style.display = 'inline-flex';
   }
 }
 
@@ -1052,14 +1087,14 @@ async function savePosition(){
     notas, tramos
   };
   try {
-    const caller = currentView === 'reto' ? apiCallMaster : apiCall;
+    const caller = currentView === 'gestionar' ? apiCallMaster : apiCall;
     if(editingId) {
       await caller('PUT', { id: editingId, ...payload });
     } else {
       await caller('POST', payload);
     }
     closeModal();
-    if (currentView === 'reto') await loadMasterManage();
+    if (currentView === 'gestionar') await loadMasterManage();
     else await loadPositions();
   } catch(e) {
     alert('Error guardando posición');
@@ -1071,10 +1106,10 @@ function editPos(id){ openModal(id); }
 async function deletePos(id){
   if(confirm('¿Eliminar esta posición?')){
     try {
-      const caller = currentView === 'reto' ? apiCallMaster : apiCall;
+      const caller = currentView === 'gestionar' ? apiCallMaster : apiCall;
       await caller('DELETE', null, id);
       expanded.delete(id);
-      if (currentView === 'reto') await loadMasterManage();
+      if (currentView === 'gestionar') await loadMasterManage();
       else await loadPositions();
     } catch(e) {
       alert('Error eliminando posición');
