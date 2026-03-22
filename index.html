@@ -537,11 +537,14 @@ async function loadMasterPortfolio() {
       headers: { 'Authorization': 'Bearer ' + authToken }
     });
     const data = await res.json();
-    if (!data.positions?.length && !data.coordinator) return;
-
     const section = document.getElementById('master-section');
     section.style.display = 'block';
     document.getElementById('master-name').textContent = data.coordinator?.name || 'Coordinador';
+
+    if (!data.positions?.length) {
+      document.getElementById('master-tbody').innerHTML = '<tr class="empty-row"><td colspan="12">Sin posiciones cargadas aún</td></tr>';
+      return;
+    }
 
     // Render master positions
     const positions = (data.positions || []).map(p => ({

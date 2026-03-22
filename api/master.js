@@ -22,7 +22,7 @@ export default async function handler(req, res) {
     { headers }
   );
   const profiles = await profileRes.json();
-  if (!profiles?.length) return res.status(200).json({ positions: [], coordinator: null });
+  if (!profiles?.length) return res.status(200).json({ positions: [], coordinator: { name: 'Coordinador' } });
 
   const coordinator = profiles[0];
 
