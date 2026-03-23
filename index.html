@@ -309,9 +309,9 @@
       <button class="auth-tab active" id="tab-login" onclick="switchTab('login')">Ingresar</button>
       <button class="auth-tab" id="tab-register" onclick="switchTab('register')">Registrarse</button>
     </div>
-    <input type="email" id="auth-email" placeholder="Email">
-    <input type="password" id="auth-password" placeholder="Contraseña">
-    <input type="text" id="auth-alias" placeholder="Nombre / Alias (opcional)" style="display:none;">
+    <input type="email" id="auth-email" placeholder="Email" onkeydown="if(event.key==='Enter')handleAuth()">
+    <input type="password" id="auth-password" placeholder="Contraseña" onkeydown="if(event.key==='Enter')handleAuth()">
+    <input type="text" id="auth-alias" placeholder="Nombre / Alias (opcional)" style="display:none;" onkeydown="if(event.key==='Enter')handleAuth()">
     <button class="btn primary" id="auth-btn" onclick="handleAuth()">Ingresar</button>
     <div id="auth-error"></div>
     <div style="margin-top:16px;text-align:center;">
@@ -553,6 +553,7 @@ async function handleAuth() {
     document.getElementById('auth-overlay').style.display = 'none';
     document.getElementById('user-email').textContent = displayName;
     initCoordinatorUI();
+    startSessionTimer();
     loadPositions();
   } catch(e) {
     errEl.textContent = 'Error de conexion';
@@ -1049,6 +1050,42 @@ function initCoordinatorUI() {
   }
 }
 
+// ── Session Timer ──
+let sessionTimer = null;
+let sessionWarningTimer = null;
+
+function startSessionTimer() {
+  clearTimeout(sessionTimer);
+  clearTimeout(sessionWarningTimer);
+  const TOKEN_DURATION = 3600 * 1000; // 1 hora en ms
+  const WARNING_BEFORE = 60 * 1000;   // avisar 1 minuto antes
+
+  sessionWarningTimer = setTimeout(() => {
+    // Mostrar advertencia 1 minuto antes
+    const bar = document.createElement('div');
+    bar.id = 'session-warning';
+    bar.style.cssText = 'position:fixed;top:0;left:0;right:0;background:var(--yellow);color:#060a0f;text-align:center;padding:10px;font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:0.06em;z-index:9999;';
+    bar.innerHTML = '⚠ Tu sesión expira en 1 minuto — guardá tu trabajo <button onclick="renewSession()" style="margin-left:16px;background:#060a0f;color:var(--yellow);border:none;padding:4px 12px;cursor:pointer;font-family:var(--mono);font-size:11px;">Renovar sesión</button>';
+    document.body.appendChild(bar);
+  }, TOKEN_DURATION - WARNING_BEFORE);
+
+  sessionTimer = setTimeout(() => {
+    // Cerrar sesión al expirar
+    const bar = document.getElementById('session-warning');
+    if (bar) bar.remove();
+    alert('Tu sesión expiró. Por favor volvé a iniciar sesión.');
+    logout();
+  }, TOKEN_DURATION);
+}
+
+async function renewSession() {
+  // Re-login silencioso no es posible sin contraseña — llevar al login
+  const bar = document.getElementById('session-warning');
+  if (bar) bar.remove();
+  alert('Para renovar la sesión cerrá y volvé a iniciar sesión.');
+  logout();
+}
+
 // ── Profile ──
 function openProfile() {
   const alias = localStorage.getItem('pt_alias') || '';
@@ -1255,6 +1292,7 @@ if (authToken) {
   const savedAlias = localStorage.getItem('pt_alias');
   document.getElementById('user-email').textContent = savedAlias || authUser?.email || authUser?.user_metadata?.email || '';
   initCoordinatorUI();
+  startSessionTimer();
   loadPositions();
 } else {
   document.getElementById('auth-overlay').style.display = 'flex';
