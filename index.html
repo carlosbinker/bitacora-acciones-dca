@@ -1092,11 +1092,11 @@ function checkRecoveryToken() {
   const token = params.get('access_token');
   if (type === 'recovery' && token) {
     recoveryToken = token;
-    // Clear URL hash
     history.replaceState(null, '', window.location.pathname);
-    // Show recovery overlay, hide everything else
-    document.getElementById('auth-overlay').style.display = 'none';
-    document.getElementById('reset-password-overlay').style.display = 'flex';
+    // Mostrar overlay de recovery encima de todo, incluso del dashboard
+    const overlay = document.getElementById('reset-password-overlay');
+    overlay.style.display = 'flex';
+    overlay.style.zIndex = '9999';
     return true;
   }
   return false;
@@ -1367,23 +1367,15 @@ setInterval(clock,1000); clock();
 document.getElementById('modal-overlay').addEventListener('click',function(e){if(e.target===this)closeModal();});
 
 // ── Init ──
-// PRIMERO verificar si hay token de recovery en la URL
-if (checkRecoveryToken()) {
-  // Recovery flow — limpiar cualquier sesión existente sin hacer logout completo
-  localStorage.removeItem('pt_token');
-  localStorage.removeItem('pt_user');
-  localStorage.removeItem('pt_alias');
-  localStorage.removeItem('pt_rol');
-  authToken = null; authUser = null;
-  // checkRecoveryToken ya mostró el formulario
-} else if (authToken) {
+const hasRecovery = checkRecoveryToken();
+if (!hasRecovery && authToken) {
   document.getElementById('auth-overlay').style.display = 'none';
   const savedAlias = localStorage.getItem('pt_alias');
   document.getElementById('user-email').textContent = savedAlias || authUser?.email || authUser?.user_metadata?.email || '';
   initCoordinatorUI();
   startSessionTimer();
   loadPositions();
-} else {
+} else if (!hasRecovery) {
   document.getElementById('auth-overlay').style.display = 'flex';
   render();
 }
