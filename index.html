@@ -321,16 +321,18 @@
     </div>
   </div>
 
-  <!-- Reset Password Form (shown when recovery token detected in URL) -->
-  <div class="auth-box reset-form" id="reset-password-form">
-    <div style="margin-bottom:24px;display:flex;flex-direction:column;align-items:center;gap:14px;">
-      <h2>NUEVA CONTRASEÑA</h2>
-      <p>Ingresá tu nueva contraseña</p>
+  <!-- Reset Password Overlay -->
+  <div class="auth-overlay" id="reset-password-overlay" style="display:none;">
+    <div class="auth-box">
+      <div style="margin-bottom:24px;text-align:center;">
+        <h2>NUEVA CONTRASEÑA</h2>
+        <p>Ingresá y confirmá tu nueva contraseña</p>
+      </div>
+      <input type="password" id="new-password" placeholder="Nueva contraseña" onkeydown="if(event.key==='Enter')submitNewPassword()">
+      <input type="password" id="new-password-confirm" placeholder="Confirmá la contraseña" onkeydown="if(event.key==='Enter')submitNewPassword()">
+      <button class="btn primary" onclick="submitNewPassword()" style="width:100%;margin-top:6px;padding:13px;font-size:13px;">Cambiar Contraseña</button>
+      <div id="reset-error" style="color:var(--red);font-size:11px;margin-top:10px;min-height:16px;"></div>
     </div>
-    <input type="password" id="new-password" placeholder="Nueva contraseña" onkeydown="if(event.key==='Enter')submitNewPassword()">
-    <input type="password" id="new-password-confirm" placeholder="Confirmá la contraseña" onkeydown="if(event.key==='Enter')submitNewPassword()">
-    <button class="btn primary" onclick="submitNewPassword()" style="width:100%;margin-top:6px;padding:13px;font-size:13px;">Cambiar Contraseña</button>
-    <div id="reset-error" style="color:var(--red);font-size:11px;margin-top:10px;min-height:16px;"></div>
   </div>
 </div>
 
@@ -1075,19 +1077,11 @@ function checkRecoveryToken() {
   const token = params.get('access_token');
   if (type === 'recovery' && token) {
     recoveryToken = token;
-    // Hide auth overlay, show reset form
-    document.getElementById('auth-overlay').style.display = 'none';
-    document.getElementById('reset-password-form').classList.add('active');
-    document.getElementById('reset-password-form').style.display = 'flex';
-    document.getElementById('reset-password-form').style.flexDirection = 'column';
-    document.getElementById('reset-password-form').style.alignItems = 'center';
-    document.getElementById('reset-password-form').style.justifyContent = 'center';
-    document.getElementById('reset-password-form').style.position = 'fixed';
-    document.getElementById('reset-password-form').style.inset = '0';
-    document.getElementById('reset-password-form').style.background = 'var(--bg)';
-    document.getElementById('reset-password-form').style.zIndex = '3000';
     // Clear URL hash
     history.replaceState(null, '', window.location.pathname);
+    // Show recovery overlay, hide everything else
+    document.getElementById('auth-overlay').style.display = 'none';
+    document.getElementById('reset-password-overlay').style.display = 'flex';
     return true;
   }
   return false;
@@ -1111,9 +1105,8 @@ async function submitNewPassword() {
     const data = await res.json();
     if (data.error) { errEl.textContent = data.error; return; }
 
-    // Success - hide reset form, show login
-    document.getElementById('reset-password-form').style.display = 'none';
-    document.getElementById('reset-password-form').classList.remove('active');
+    // Success - hide reset overlay, show login
+    document.getElementById('reset-password-overlay').style.display = 'none';
     recoveryToken = null;
     alert('¡Contraseña actualizada! Ya podés iniciar sesión.');
     document.getElementById('auth-overlay').style.display = 'flex';
@@ -1359,8 +1352,15 @@ setInterval(clock,1000); clock();
 document.getElementById('modal-overlay').addEventListener('click',function(e){if(e.target===this)closeModal();});
 
 // ── Init ──
+// PRIMERO verificar si hay token de recovery en la URL
 if (checkRecoveryToken()) {
-  // Recovery flow - handled by checkRecoveryToken
+  // Recovery flow — limpiar cualquier sesión existente sin hacer logout completo
+  localStorage.removeItem('pt_token');
+  localStorage.removeItem('pt_user');
+  localStorage.removeItem('pt_alias');
+  localStorage.removeItem('pt_rol');
+  authToken = null; authUser = null;
+  // checkRecoveryToken ya mostró el formulario
 } else if (authToken) {
   document.getElementById('auth-overlay').style.display = 'none';
   const savedAlias = localStorage.getItem('pt_alias');
