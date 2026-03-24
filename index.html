@@ -1137,8 +1137,8 @@ let sessionWarningTimer = null;
 function startSessionTimer() {
   clearTimeout(sessionTimer);
   clearTimeout(sessionWarningTimer);
-  const TOKEN_DURATION = 2 * 60 * 1000; // PRUEBA: 2 min (producción: 3600 * 1000)
-  const WARNING_BEFORE = 60 * 1000;
+  const TOKEN_DURATION = 3600 * 1000; // 1 hora
+  const WARNING_BEFORE = 60 * 1000;   // avisar 1 minuto antes
 
   sessionWarningTimer = setTimeout(() => {
     // Mostrar banner de advertencia
