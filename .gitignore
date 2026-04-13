@@ -1,4 +1,4 @@
 .vercel
 *.Zone.Identifier
 .env
-.env.local
+.env.localcd ..
