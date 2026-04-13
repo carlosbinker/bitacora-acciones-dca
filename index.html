@@ -71,9 +71,9 @@
   .table-wrap { overflow-x:auto; }
   table { width:100%; border-collapse:collapse; }
   thead tr { border-bottom:1px solid #2a2210; }
-  th { font-size:9.5px; letter-spacing:0.1em; text-transform:uppercase; color:#7a6a3a; padding:10px 12px; text-align:right; font-weight:700; cursor:pointer; user-select:none; white-space:nowrap; transition:color 0.15s; }
-  th:hover{color:#c9a84c;} th:first-child,th:nth-child(2),th:nth-child(3){text-align:left;} th.sorted{color:#c9a84c;}
-  th .sort-arrow{margin-left:4px;opacity:0.4;} th.sorted .sort-arrow{opacity:1;}
+  th { font-size:11px; letter-spacing:0.1em; text-transform:uppercase; color:#c9a84c; padding:10px 12px; text-align:right; font-weight:800; cursor:pointer; user-select:none; white-space:nowrap; transition:color 0.15s; }
+  th:hover{color:#f0d080;} th:first-child,th:nth-child(2),th:nth-child(3){text-align:left;} th.sorted{color:#f0d080;}
+  th .sort-arrow{margin-left:4px;opacity:0.5;} th.sorted .sort-arrow{opacity:1;}
 
   tr.row-summary { border-bottom:1px solid var(--border); transition:background 0.1s; }
   tr.row-summary:hover { background:var(--surface2); }
@@ -90,9 +90,16 @@
   td:first-child,td:nth-child(2),td:nth-child(3){text-align:left;}
 
   .ticker { font-family:var(--sans); font-size:13px; font-weight:600; color:var(--text-hi); letter-spacing:0.04em; }
-  .ticker-sub { font-family:var(--sans); font-size:11px; font-weight:400; color:var(--text-dim); }
-  .date { color:var(--text-dim); font-size:11px; font-weight:700; }
+  .ticker-sub { font-family:var(--sans); font-size:11px; font-weight:700; color:var(--text-dim); }
+  .date { color:#ffffff; font-size:12px; font-weight:800; letter-spacing:0.03em; }
+  .date-dca1 { color:var(--red); font-size:11.5px; font-weight:800; letter-spacing:0.03em; }
+  .date-dca2 { color:var(--yellow); font-size:11.5px; font-weight:800; letter-spacing:0.03em; }
+  .date-dca3 { color:var(--green); font-size:11.5px; font-weight:800; letter-spacing:0.03em; }
   .ppp-hint { font-size:9.5px; color:var(--text-muted); margin-left:7px; letter-spacing:0.04em; }
+  /* DCA row data bold colors */
+  .dca-val-1 { color:var(--red); font-weight:700; }
+  .dca-val-2 { color:var(--yellow); font-weight:700; }
+  .dca-val-3 { color:var(--green); font-weight:700; }
 
   .toggle-btn { width:22px; height:22px; border:1px solid var(--border2); background:var(--surface2); color:var(--text-dim); cursor:pointer; display:inline-flex; align-items:center; justify-content:center; font-size:10px; font-weight:600; transition:all 0.15s; margin-right:8px; vertical-align:middle; border-radius:3px; }
   .toggle-btn:hover { border-color:#c9a84c; color:#c9a84c; background:rgba(201,168,76,0.08); }
@@ -109,12 +116,13 @@
   .dca-1 .dca-dot{background:#7ab8f5;} .dca-2 .dca-dot{background:#b490ef;} .dca-3 .dca-dot{background:#e8956a;}
   .dca-count { font-family:var(--sans); font-size:11px; font-weight:700; color:var(--text-hi); letter-spacing:0.04em; background:rgba(91,163,245,0.08); border:1px solid rgba(91,163,245,0.2); padding:3px 9px; border-radius:2px; }
 
-  .pnl-pos{color:var(--green);font-weight:400;} .pnl-neg{color:var(--red);font-weight:400;} .pnl-zero{color:var(--text-muted);}
+  .pnl-pos{color:var(--green);font-weight:700;} .pnl-neg{color:var(--red);font-weight:700;} .pnl-zero{color:var(--text-muted);}
   .price{font-weight:400;color:var(--text-hi);} .units{color:var(--text);font-weight:300;}
 
   tfoot tr{border-top:2px solid var(--border2);}
-  tfoot td{padding:12px;font-weight:400;color:var(--text);}
-  tfoot .total-label{font-family:var(--sans);font-size:11px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-muted);}
+  tfoot td{padding:14px 12px;font-weight:700;color:var(--text);font-size:14px;}
+  tfoot .total-label{font-family:var(--sans);font-size:12px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--yellow);}
+  tfoot strong{font-size:15px;color:var(--text-hi);}
 
   .actions{display:flex;gap:6px;justify-content:flex-end;}
   .action-btn{width:26px;height:26px;border:1px solid var(--border);background:transparent;color:var(--text-muted);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:12px;transition:all 0.15s;font-family:var(--mono);}
@@ -168,6 +176,34 @@
   ::-webkit-scrollbar{width:6px;height:6px;} ::-webkit-scrollbar-track{background:var(--bg);} ::-webkit-scrollbar-thumb{background:var(--border2);} ::-webkit-scrollbar-thumb:hover{background:var(--text-muted);}
   @keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
   tr.row-summary{animation:fadeIn 0.18s ease both;}
+
+  /* ── LIGHT MODE ── */
+  body.light-mode {
+    --bg: #f0f2f5;
+    --surface: #ffffff;
+    --surface2: #e8ecf2;
+    --border: #d0d8e8;
+    --border2: #b8c4d8;
+    --text: #3a4a5c;
+    --text-hi: #1a2535;
+    --text-muted: #8a9ab0;
+    --text-dim: #6a7f95;
+    --green: #0ea87a;
+    --green-bg: rgba(14,168,122,0.10);
+    --red: #d63055;
+    --red-bg: rgba(214,48,85,0.09);
+    --yellow: #c49020;
+    --yellow-bg: rgba(196,144,32,0.10);
+    --blue: #2a7de0;
+    --blue-bg: rgba(42,125,224,0.09);
+    --accent: #2a7de0;
+  }
+  body.light-mode::before { background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.015) 2px,rgba(0,0,0,0.015) 4px); }
+  body.light-mode .date { color: #1a2535; }
+
+  /* Botón modo */
+  .btn-theme { font-family:var(--mono); font-size:13px; width:34px; height:34px; border:1px solid var(--border2); background:var(--surface2); color:var(--yellow); cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all 0.2s; padding:0; flex-shrink:0; }
+  .btn-theme:hover { border-color:var(--yellow); background:var(--yellow-bg); transform:scale(1.1); }
 
   /* ── VIEW TABS ── */
   .view-tabs { display:flex; gap:8px; margin-bottom:20px; border-bottom:2px solid var(--border); padding-bottom:14px; }
@@ -400,6 +436,7 @@
       <span id="quote-status" class="quote-status"></span>
       <button class="btn" id="btn-refresh" onclick="fetchQuotes()"><span class="refresh-icon">↻</span> Actualizar precios</button>
       <button class="btn" onclick="exportCSV()">↓ CSV</button>
+      <button class="btn-theme" id="btn-theme" onclick="toggleTheme()" title="Cambiar tema">🌙</button>
     </div>
   </div>
 
@@ -919,14 +956,16 @@ function render(){
           const cur=t.unidades*(p.estado==='cerrada'&&p.pVenta?p.pVenta:p.valorActual);
           const pu=cur-tot, pp=tot>0?(pu/tot)*100:0;
           const dd=Math.floor((new Date()-new Date(t.fecha))/86400000);
+          const dcaDateClass = n===1?'date-dca1':n===2?'date-dca2':'date-dca3';
+          const dcaValClass = `dca-val-${n}`;
           html+=`<tr class="row-dca${isLast?' last-dca':''}" data-parent="${p.id}">
             <td><span class="ticker-sub">${p.ticker}</span></td>
-            <td><span class="date">${fmtDate(t.fecha)}</span></td>
+            <td><span class="${dcaDateClass}">${fmtDate(t.fecha)}</span></td>
             <td></td>
-            <td style="color:var(--text-muted)">${dd}</td>
-            <td style="color:var(--text-dim)">${t.unidades}</td>
-            <td style="color:var(--text-dim)">${fmt$(t.precio)}</td>
-            <td style="color:var(--text-dim)">${fmt$(tot)}</td>
+            <td class="${dcaValClass}">${dd}</td>
+            <td class="${dcaValClass}">${t.unidades}</td>
+            <td class="${dcaValClass}">${fmt$(t.precio)}</td>
+            <td class="${dcaValClass}">${fmt$(tot)}</td>
             <td></td><td></td>
             <td>${pnlHtml(pp,true)}</td>
             <td>${pnlHtml(pu)}</td>
@@ -1430,8 +1469,37 @@ function clock(){
   document.getElementById('current-date').textContent=n.toLocaleDateString('es-AR',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
   document.getElementById('current-time').textContent=n.toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false});
 }
+
+// ── Toggle Dark / Light Mode ──
+function toggleTheme(){
+  const isLight = document.body.classList.toggle('light-mode');
+  const btn = document.getElementById('btn-theme');
+  btn.textContent = isLight ? '☀️' : '🌙';
+  btn.title = isLight ? 'Modo oscuro' : 'Modo claro';
+  localStorage.setItem('pt_theme', isLight ? 'light' : 'dark');
+}
+// Restaurar tema guardado
+(function(){
+  const saved = localStorage.getItem('pt_theme');
+  if (saved === 'light') {
+    document.body.classList.add('light-mode');
+    // El btn se actualizará cuando el DOM esté listo
+    document.addEventListener('DOMContentLoaded', ()=>{
+      const btn = document.getElementById('btn-theme');
+      if(btn){ btn.textContent='☀️'; btn.title='Modo oscuro'; }
+    });
+  }
+})();
 setInterval(clock,1000); clock();
 document.getElementById('modal-overlay').addEventListener('click',function(e){if(e.target===this)closeModal();});
+
+// Aplicar icono de tema guardado
+(function(){
+  if(localStorage.getItem('pt_theme')==='light'){
+    const btn=document.getElementById('btn-theme');
+    if(btn){btn.textContent='☀️';btn.title='Modo oscuro';}
+  }
+})();
 
 // ── Init ──
 const hasRecovery = checkRecoveryToken();
